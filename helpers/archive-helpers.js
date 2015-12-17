@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var archive = require('../web/initialize');
+var headers = require('../web/http-helpers');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -43,9 +44,13 @@ exports.addUrlToList = function(url) {
 exports.isUrlArchived = function() {
 };
 
-exports.downloadUrls = function() {
-  fs.readFile('web/public/index.html', function(err, data) {
-    if (err) { throw "Whoops"; }
-      return data;
+exports.downloadUrls = function(req, res, url) {
+  if( url === '/') { 
+    url = 'web/public/index.html';
+  }
+  fs.readFile(url, function(err, data) {
+    res.writeHead(200, headers.headers);
+    res.write(data);
+    res.end();
   });
 };
