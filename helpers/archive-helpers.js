@@ -3,6 +3,7 @@ var path = require('path');
 var _ = require('underscore');
 var archive = require('../web/initialize');
 var headers = require('../web/http-helpers');
+var fetch = require('../workers/htmlfetcher');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -41,33 +42,25 @@ exports.addUrlToList = function(url) {
   });
 };
 
-exports.isUrlArchived = function(url) {
-  var path = exports.paths.archivedSites + url;
+exports.isUrlArchived = function(req, res) {
+  var path = exports.paths.archivedSites + req.url;
   fs.access(path, fs.F_OK, function(err) {
     if (!err) {
-      return true;
+      console.log("True?", req.url, "true");
+      exports.downloadUrls(req, res);
     } else {
-      return false;
+      console.log("True?", req.url, "false");
+      fetch(req, res);
     }
   });
 };
 
-exports.downloadUrls = function(req, res, url) {
-  if (exports.isUrlArchived(url) === false || url === '/') {
-    if( url === '/') { 
-      url = 'web/public/index.html';
-    }
-    fs.readFile(url, function(err, data) {
-      res.writeHead(200, headers.headers);
-      res.write(data);
-      res.end();
-    });
-  } else {
-    // return the existing archive
-    fs.readFile(exports.paths.archivedSites + url, function(err, data) {
-      res.writeHead(200, headers.headers);
-      res.write(data);
-      res.end();
-    });
-  }
+exports.downloadUrls = function(req, res) {
+  // for URLs that exist in the archive
+
+  fs.readFile(exports.paths.archivedSites + req.url, function(err, data) {
+    res.writeHead(200, headers.headers);
+    res.write(data);
+    res.end();
+  });
 };
