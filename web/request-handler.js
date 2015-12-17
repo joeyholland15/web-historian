@@ -5,7 +5,6 @@ var headers = require('./http-helpers');
 
 exports.handleRequest = function (req, res) {
   if (req.method === "GET") {
-    // archive.downloadUrls(req, res);
     //make sure to refactor if we move read functionality out of download urls method. 
     archive.isUrlArchived(req, res);
   } else if (req.method === "POST") {

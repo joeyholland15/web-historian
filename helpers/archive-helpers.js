@@ -28,39 +28,53 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function() {
-};
+exports.readListOfUrls = function(callback) {
 
-exports.isUrlInList = function() {
-};
-
-exports.addUrlToList = function(url) {
-  var file = exports.paths.list; 
-  fs.writeFile(file, url, function(err) {
-    console.log("File updated");
-    if (err) { throw error; }
+  fs.readFile(exports.paths.list, function(err, data) {
+    if (err) { throw "Can't read archives/sites.txt"; }
+    else {
+      callback(data.toString('utf8').split('\n'));
+    }  
   });
 };
 
-exports.isUrlArchived = function(req, res) {
-  var path = exports.paths.archivedSites + req.url;
-  fs.access(path, fs.F_OK, function(err) {
-    if (!err) {
-      console.log("True?", req.url, "true");
-      exports.downloadUrls(req, res);
-    } else {
-      console.log("True?", req.url, "false");
-      fetch(req, res);
-    }
+exports.isUrlInList = function(url, callback) {
+  callback(url);
+};
+
+exports.addUrlToList = function(url, callback) {
+  var file = exports.paths.list;
+  callback(url, function(url) {
+    fs.writeFile(file, url, function(err) {
+      console.log("File updated");
+      if (err) { throw error; }
+    });
   });
 };
 
-exports.downloadUrls = function(req, res) {
+exports.isUrlArchived = function(url, callback) {
+  callback(url);
+  // var path = exports.paths.archivedSites + req.url;
+  // fs.access(path, fs.F_OK, function(err) {
+  //   if (!err) {
+  //     console.log("True?", req.url, "true");
+  //     exports.downloadUrls(req, res);
+  //   } else {
+  //     console.log("True?", req.url, "false");
+  //     fetch(req, res);
+  //   }
+  // });
+};
+
+exports.downloadUrls = function(array) {
   // for URLs that exist in the archive
-
-  fs.readFile(exports.paths.archivedSites + req.url, function(err, data) {
-    res.writeHead(200, headers.headers);
-    res.write(data);
-    res.end();
-  });
+  //
+  // fs.readFile(exports.paths.archivedSites + req.url, function(err, data) {
+  //   res.writeHead(200, headers.headers);
+  //   res.write(data);
+  //   res.end();
+  // });
+  for(var i = 0; i < array.length; i++) {
+    fs.mkdir(exports.paths.archivedSites + array[i]); 
+  }; 
 };
