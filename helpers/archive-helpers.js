@@ -41,16 +41,33 @@ exports.addUrlToList = function(url) {
   });
 };
 
-exports.isUrlArchived = function() {
+exports.isUrlArchived = function(url) {
+  var path = exports.paths.archivedSites + url;
+  fs.access(path, fs.F_OK, function(err) {
+    if (!err) {
+      return true;
+    } else {
+      return false;
+    }
+  });
 };
 
 exports.downloadUrls = function(req, res, url) {
-  if( url === '/') { 
-    url = 'web/public/index.html';
+  if (exports.isUrlArchived(url) === false || url === '/') {
+    if( url === '/') { 
+      url = 'web/public/index.html';
+    }
+    fs.readFile(url, function(err, data) {
+      res.writeHead(200, headers.headers);
+      res.write(data);
+      res.end();
+    });
+  } else {
+    // return the existing archive
+    fs.readFile(exports.paths.archivedSites + url, function(err, data) {
+      res.writeHead(200, headers.headers);
+      res.write(data);
+      res.end();
+    });
   }
-  fs.readFile(url, function(err, data) {
-    res.writeHead(200, headers.headers);
-    res.write(data);
-    res.end();
-  });
 };
