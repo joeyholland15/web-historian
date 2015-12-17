@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var archive = require('../web/initialize');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -31,11 +32,20 @@ exports.readListOfUrls = function() {
 exports.isUrlInList = function() {
 };
 
-exports.addUrlToList = function() {
+exports.addUrlToList = function(url) {
+  var file = exports.paths.list; 
+  fs.writeFile(file, url, function(err) {
+    console.log("File updated");
+    if (err) { throw error; }
+  });
 };
 
 exports.isUrlArchived = function() {
 };
 
 exports.downloadUrls = function() {
+  fs.readFile('web/public/index.html', function(err, data) {
+    if (err) { throw "Whoops"; }
+      return data;
+  });
 };
