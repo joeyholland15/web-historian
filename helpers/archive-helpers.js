@@ -75,6 +75,6 @@ exports.downloadUrls = function(array) {
   //   res.end();
   // });
   for(var i = 0; i < array.length; i++) {
-    fs.mkdir(exports.paths.archivedSites + array[i]); 
+    fs.mkdir(exports.paths.archivedSites + "/" + array[i]); 
   }; 
 };

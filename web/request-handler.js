@@ -11,6 +11,13 @@ exports.handleRequest = function (req, res) {
         res.write(data);
         res.end();
       });
+    } else {
+      //archive.isUrlArchived(req.url); 
+      fs.readFile(archive.paths.archivedSites + req.url, function(err, data) {
+        res.writeHead(200, headers.headers);
+        res.write(data);
+        res.end();
+      });
     }
     //make sure to refactor if we move read functionality out of download urls method. 
     // archive.isUrlArchived(req, res);
