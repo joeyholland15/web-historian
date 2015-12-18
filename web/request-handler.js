@@ -14,9 +14,14 @@ exports.handleRequest = function (req, res) {
       });
     } else {
       fs.readFile(archive.paths.archivedSites + req.url, function(err, data) {
-        res.writeHead(200, headers.headers);
-        res.write(data);
-        res.end();
+        if (!data) {
+          res.writeHead(404, headers.headers);
+          res.end();  
+        } else {
+          res.writeHead(200, headers.headers);
+          res.write(data);
+          res.end();
+        }
       });
     }
     //make sure to refactor if we move read functionality out of download urls method. 
