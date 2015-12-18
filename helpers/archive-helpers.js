@@ -43,13 +43,14 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
-  var file = exports.paths.list;
-  callback(url, function(url) {
-    fs.writeFile(file, url, function(err) {
-      console.log("File updated");
-      if (err) { throw error; }
-    });
-  });
+  // var file = exports.paths.list; // this is the sites lists
+  callback();
+  //   function(url) {
+  //   fs.writeFile(file, url, function(err) {
+  //     console.log("File updated");
+  //     if (err) { throw error; }
+  //   });
+  // });
 };
 
 exports.isUrlArchived = function(url, callback) {

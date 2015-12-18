@@ -23,24 +23,43 @@ exports.handleRequest = function (req, res) {
     //make sure to refactor if we move read functionality out of download urls method. 
     // archive.isUrlArchived(req, res);
   } else if (req.method === "POST") {
-    res.writeHead(302, headers.headers);
-    var URL = '';
+    var url = '';
     req.on('data', function(chunk) {
-      URL += chunk;
-      URL = URL.split('=')[1];
-      archive.readListOfUrls(function(sites) {
-        return archive.isUrlInList(URL, function(test) {
-          if (_.contains(sites, URL)) {
-            test = true;
+      url += chunk;
+      url = url.split('=')[1];
+      archive.isUrlArchived(url, function() {
+        var path = archive.paths.archivedSites + req.url;
+        fs.access(path, fs.F_OK, function(err) {
+          if (err) { // this is a valid path
+            isArchrived = true;
+            console.log("Archived?", isArchrived);
+            // return the archived html txt
           } else {
-            test = false;
+            isArchrived = false; // this is not valid path
+            console.log("Archived?", isArchrived);
+            archive.readListOfUrls(function(sites) {
+              archive.isUrlInList(url, function(test) {
+                if (_.contains(sites, url)) {
+                  test = true; // cool, wait. here is your 302
+                  res.writeHead(302, headers.headers); // note: this need to go in the path of valid URL, but not archived
+                } else {
+                  test = false; // Add to the List
+                  archive.addUrlToList(url, function() {
+                    var file = archive.paths.list; // this is the sites lists
+                    fs.writeFile(file, url + '\n', function(err) {
+                      console.log("File updated");
+                      if (err) { throw error; }
+                      res.writeHead(302, headers.headers);
+                      res.end();
+                    });
+                  });
+                }
+              }); 
+            }); 
           }
-          console.log("Test, line 38: ", test); 
-          return test;
-        }); 
+        });
       });
-    });
-
+    }); 
 
     //archive.addUrlToList(req.url, function() {
 
