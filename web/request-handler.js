@@ -13,7 +13,6 @@ exports.handleRequest = function (req, res) {
         res.end();
       });
     } else {
-      //archive.isUrlArchived(req.url); 
       fs.readFile(archive.paths.archivedSites + req.url, function(err, data) {
         res.writeHead(200, headers.headers);
         res.write(data);
