@@ -39,7 +39,7 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
-  callback(url);
+  callback();
 };
 
 exports.addUrlToList = function(url, callback) {
@@ -75,6 +75,6 @@ exports.downloadUrls = function(array) {
   //   res.end();
   // });
   for(var i = 0; i < array.length; i++) {
-    fs.mkdir(exports.paths.archivedSites + "/" + array[i]); 
-  }; 
+    fs.mkdir(exports.paths.archivedSites + '/' + array[i] + '/'); 
+  } 
 };
